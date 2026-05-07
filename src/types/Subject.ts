@@ -1,5 +1,5 @@
 export type Subject = {
-    id: string;
+    id: Number;
     name: string;
     code: string;
     description: string;
