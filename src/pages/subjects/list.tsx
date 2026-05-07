@@ -8,7 +8,7 @@ import {DEPARTMENT_OPTIONS} from "@/constants";
 import {CreateButton} from "@/components/refine-ui/buttons/create.tsx";
 import {DataTable} from "@/components/refine-ui/data-table/data-table.tsx";
 import {useTable} from "@refinedev/react-table";
-import {Subject} from "@/types";
+import {Subject} from "../../types/Subject";
 import {ColumnDef} from "@tanstack/react-table";
 import {Badge} from "@/components/ui/badge.tsx";
 
@@ -70,7 +70,7 @@ const SubjectsList = () => {
             <Breadcrumb />
             <h1 className="page-title">Subjects</h1>
             <div className="intro-row">
-                <p>Quick access to essential metrics and management tools.</p>
+                <p className="whitespace-nowrap">Quick access to essential metrics and management tools.</p>
                 <div className="actions-row">
                     <div className="search-field">
                         <Search className="search-icon" />
@@ -100,10 +100,10 @@ const SubjectsList = () => {
                             </SelectContent>
                         </Select>
                         <CreateButton />
-                            <DataTable table={subjectTable} />
                     </div>
                 </div>
             </div>
+            <DataTable table={subjectTable} />
         </ListView>
     )
 }
