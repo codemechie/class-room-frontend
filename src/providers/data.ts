@@ -1,20 +1,38 @@
-import {BaseRecord, DataProvider, GetListParams, GetListResponse} from "@refinedev/core";
-import {mockData} from '../constants/mock-data'
-export const dataProvider: DataProvider = {
-  getList: async <TData extends BaseRecord = BaseRecord>({resource}:
-    GetListParams): Promise<GetListResponse<TData>> => {
-      if(resource !== 'subjects') return {data: [] as TData[], total: 0};
+import {createDataProvider, CreateDataProviderOptions} from "@refinedev/rest";
+import {BACKEND_BASE_URL} from "@/constants";
+import {ListResponse} from "@/types";
+import type {GetListParams} from "@refinedev/core";
 
-      return {
-        data: mockData as unknown as TData[],
-        total: mockData.length
-      }
-  },
+const options: CreateDataProviderOptions = {
+  getList: {
+    getEndpoint: ({resource}) => resource,
+    buildQueryParams: async({resource, pagination, filters}) => {
 
-getOne: async () => {throw new Error('This function is not present in mock')},
-create: async () => {throw new Error('This function is not present in mock')},
-update: async () => {throw new Error('This function is not present in mock')},
-deleteOne: async () => {throw new Error('This function is not present in mock')},
+  const page = pagination?.currentPage ?? 1;
+  const pageSize = pagination?.pageSize ?? 10;
 
-getApiUrl: () => ''
+  const params: Record<string, string|number> = {page, limit: pageSize};
+
+  filters?.forEach((filter) => {
+    const field = 'field' in filter ? filter.field : '';
+    const value = String(filter.value);
+    if(resource === "subjects"){
+      if(field === "department") params.department = value;
+      if(field === "name" || field === "code") params.search = value;
+  }
+})
+  return params;
+      },
+    mapResponse: async (response) => {
+      const payload: ListResponse = await response.json();
+      return payload.data ?? [];
+    },
+    getTotalCount: async (response) => {
+      const payload: ListResponse = await response.json()
+      return payload.pagination?.total ?? payload.data?.length ?? 0;
+    }
+  }
 }
+
+const {dataProvider} = createDataProvider(BACKEND_BASE_URL, options);
+export {dataProvider};

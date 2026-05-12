@@ -8,7 +8,7 @@ import {DEPARTMENT_OPTIONS} from "@/constants";
 import {CreateButton} from "@/components/refine-ui/buttons/create.tsx";
 import {DataTable} from "@/components/refine-ui/data-table/data-table.tsx";
 import {useTable} from "@refinedev/react-table";
-import {Subject} from "../../types/Subject";
+import {Index} from "@/types";
 import {ColumnDef} from "@tanstack/react-table";
 import {Badge} from "@/components/ui/badge.tsx";
 
@@ -22,8 +22,8 @@ const SubjectsList = () => {
         {field: "name", operator: "contains" as const, value: searchQuery}
     ]: [];
 
-    const subjectTable = useTable<Subject>({
-        columns: useMemo<ColumnDef<Subject>[]>(() => [
+    const subjectTable = useTable<Index>({
+        columns: useMemo<ColumnDef<Index>[]>(() => [
             {
                 id: "code",
                 accessorKey: "code",
@@ -40,14 +40,14 @@ const SubjectsList = () => {
             },
             {
                 id: "department",
-                accessorKey: "department",
+                accessorKey: "department.name",
                 size: 100,
                 header: ()=> <p className="column-title">Department</p>,
                 cell: ({getValue}) => <Badge variant="secondary">{getValue<string>()}</Badge>
             },
             {
-                id: "descrption",
-                accessorKey: "descrption",
+                id: "description",
+                accessorKey: "description",
                 header: ()=> <p className="column-title">Description</p>,
                 cell: ({getValue}) => <span className="truncate line-clamp-2">{getValue<string>()}</span>
             }
