@@ -1,17 +1,25 @@
 import {createDataProvider, CreateDataProviderOptions} from "@refinedev/rest";
 import {BACKEND_BASE_URL} from "@/constants";
 import {ListResponse} from "@/types";
-import type {GetListParams} from "@refinedev/core";
+
+if (!BACKEND_BASE_URL) {
+  throw new Error("BACKEND_BASE_URL requires BACKEND_BASE_URL");
+}
 
 const options: CreateDataProviderOptions = {
   getList: {
     getEndpoint: ({resource}) => resource,
-    buildQueryParams: async({resource, pagination, filters}) => {
+    buildQueryParams: async({resource, pagination, filters, sorters}) => {
 
   const page = pagination?.currentPage ?? 1;
   const pageSize = pagination?.pageSize ?? 10;
 
   const params: Record<string, string|number> = {page, limit: pageSize};
+      if (sorters?.length) {
+            const { field, order } = sorters[0];
+            params.sortBy = String(field);
+            params.sortOrder = order;
+          }
 
   filters?.forEach((filter) => {
     const field = 'field' in filter ? filter.field : '';
@@ -24,11 +32,11 @@ const options: CreateDataProviderOptions = {
   return params;
       },
     mapResponse: async (response) => {
-      const payload: ListResponse = await response.json();
+      const payload: ListResponse = await response.clone().json();
       return payload.data ?? [];
     },
     getTotalCount: async (response) => {
-      const payload: ListResponse = await response.json()
+      const payload: ListResponse = await response.clone().json()
       return payload.pagination?.total ?? payload.data?.length ?? 0;
     }
   }
