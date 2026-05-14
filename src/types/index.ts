@@ -83,6 +83,7 @@ export type User = {
     department?: string;
 };
 
+
 export type Schedule = {
     day: string;
     startTime: string;
@@ -93,6 +94,16 @@ export type Department = {
     id: number;
     name: string;
     description: string;
+};
+
+export type Subject = {
+    id: number;
+    code: string;
+    departmentId: number;
+    name: string;
+    description: string | null;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export type ClassDetails = {
